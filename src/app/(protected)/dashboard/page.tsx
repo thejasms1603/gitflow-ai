@@ -5,7 +5,7 @@ import { useUser } from "@clerk/nextjs"
 const DashboardPage = () => {
   const {user} = useUser();
   return (
-    <div>{user?.firstName}</div>
+    <div className="">{user?.firstName}</div>
   )
 }
 

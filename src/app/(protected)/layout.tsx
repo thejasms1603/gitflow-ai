@@ -1,22 +1,18 @@
 import { ModeToggle } from "@/components/ModeToggle"
+import Navbar from "@/components/Navbar"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { UserButton } from "@clerk/nextjs"
+import AppSideBar from "./app-sidebar"
 
 const layout = ({children} : {children : React.ReactNode}) => {
   return (
     <SidebarProvider>
+      <AppSideBar/>
         <main className="w-full m-2">
-            <div className="flex items-center justify-between border-sidebar-background dark:border-white bg-sidebar border shadow rounded-md p-2 px-4">
-                <p>GitFlow AI</p>
-                {/* SearchBar */}
-                <div className="items-center flex gap-3">
-                <ModeToggle/>
-                <UserButton/>
-                </div>
-            </div>
+            <Navbar/>
             <div className="h-4"></div>
             {/* main content */}
-            <div className="border">
+            <div className="border-sidebar-border border bg-sidebar shadow-md rounded-md overflow-y-scroll h-[calc(100vh-6rem)] p-4 dark:border-white">
                 {children}
             </div>
         </main>

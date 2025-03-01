@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 
 const Syncuser = async () => {
   try {
-    const { userId, redirectToSignIn } = await auth();
+    const { userId} = await auth();
     if (!userId) return redirect("/sign-in");
 
     const client = await clerkClient();
@@ -36,8 +36,6 @@ const Syncuser = async () => {
     console.error("Error Syncing User", error);
     return notFound(); 
   }
-  // Use redirect after successful sync
-  return redirect("/dashboard");
 };
 
 export default Syncuser;
