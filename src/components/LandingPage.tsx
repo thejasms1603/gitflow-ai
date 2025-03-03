@@ -1,29 +1,27 @@
-"use client"; // Ensures this runs on the client-side
+"use client";
 
 import { useRouter } from "next/navigation";
 import { BackgroundLines } from "./ui/background-lines";
 import { RocketIcon } from "lucide-react";
-import { SignIn } from "@clerk/nextjs";
-
+import Navbar from "./Navbar";
 const LandingPage = () => {
-  const router = useRouter(); // Initialize router to navigate programmatically
-
+  const router = useRouter();
   const handleSignInClick = () => {
-    router.push("/sign-in"); // Redirect to the sign-in page
+    router.push("/sign-in");
   };
 
   return (
-    <BackgroundLines className="flex w-full flex-col items-center justify-center px-4">
-      <h2 className="relative z-20 bg-gradient-to-b from-neutral-900 to-neutral-700 bg-clip-text py-2 text-center font-sans text-2xl font-bold tracking-tight text-transparent dark:from-neutral-600 dark:to-white md:py-10 md:text-4xl lg:text-7xl">
-        Welcome To, <br />
-        <span>Gitflow AI</span>
-      </h2>
-      <p className="mx-auto max-w-xl text-center text-sm text-neutral-700 dark:text-neutral-400 md:text-lg">
-        An AI-powered GitHub tool that enhances developer workflows with smart
-        automation and code insights.
-      </p>
-      <Button onClick={handleSignInClick} />
-    </BackgroundLines>
+  <BackgroundLines className="flex w-full flex-col items-center justify-center px-4">
+    <h2 className="relative z-20 bg-gradient-to-b from-neutral-900 to-neutral-700 bg-clip-text py-2 text-center font-sans text-2xl font-bold tracking-tight text-transparent dark:from-neutral-600 dark:to-white md:py-10 md:text-4xl lg:text-7xl">
+      Welcome To, <br />
+      <span>Gitflow AI</span>
+    </h2>
+    <p className="mx-auto max-w-xl text-center text-sm text-neutral-700 dark:text-neutral-400 md:text-lg">
+      An AI-powered GitHub tool that enhances developer workflows with smart
+      automation and code insights.
+    </p>
+    <Button onClick={handleSignInClick} />
+  </BackgroundLines>
   );
 };
 

@@ -16,13 +16,9 @@ import { cn } from "@/lib/utils";
 import {
   BadgeCheck,
   Bell,
-  Bot,
   ChevronsUpDown,
-  CreditCard,
-  LayoutDashboard,
   LogOut,
   PlusIcon,
-  Presentation,
   Sparkles,
 } from "lucide-react";
 import Link from "next/link";
@@ -31,7 +27,6 @@ import { items, projects } from "../data";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
-import { useAuth } from "@clerk/clerk-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,11 +39,16 @@ import {
 
 const AppSideBar = () => {
   const pathname = usePathname();
-  const { isMobile } = useSidebar();
+  const { isMobile, open } = useSidebar();
   return (
     <Sidebar collapsible="icon" side="left" variant="floating">
       <SidebarHeader className="flex items-center gap-2">
-        <p className="mt-1 bg-gradient-to-r from-blue-600 via-purple-400 to-indigo-700 inline-block text-transparent bg-clip-text font-extrabold text-xl ">GitFlow AI</p>
+       <div className="flex items-center gap-2 mt-2">
+        {/* Should Add Image */}
+        {open && (
+         <h1>GitFlow AI</h1> 
+        )}
+       </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -111,14 +111,17 @@ const AppSideBar = () => {
                 );
               })}
               <div className="h-2"></div>
-              <SidebarMenuItem>
-                <Link href="/create">
-                  <Button size="sm" className="w-fit">
-                    <PlusIcon />
-                    Create Project
-                  </Button>
-                </Link>
-              </SidebarMenuItem>
+
+              {open && (
+                <SidebarMenuItem>
+                  <Link href="/create">
+                    <Button size="sm" className="w-fit">
+                      <PlusIcon />
+                      Create Project
+                    </Button>
+                  </Link>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -126,9 +129,10 @@ const AppSideBar = () => {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton 
-                size="lg" 
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+                <SidebarMenuButton
+                  size="lg"
+                  className="flex items-center data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                >
                   <Avatar className="h-8 w-8 rounded-lg">
                     {/* should pass src and alt */}
                     <AvatarImage />

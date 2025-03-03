@@ -1,18 +1,23 @@
 import LandingPage from "@/components/LandingPage";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-const getUserDetails = async () => {
-  const { userId } = await auth();
-  return userId;
-};
+
+const getUserDetails = async () =>{
+  const user = await currentUser();
+  return user;
+}
 const Home = async () => {
-  const userId = await getUserDetails();
-  if(userId)
+  const user = await getUserDetails();
+  if(user)
   {
-      redirect('/dashboard')
+    redirect('/dashboard')
   }
-  return <LandingPage />;
+  return (
+    <main>
+      <LandingPage/>
+    </main>
+  )
 };
 
 export default Home;

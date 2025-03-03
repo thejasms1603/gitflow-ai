@@ -6,7 +6,7 @@ import AppSideBar from "./app-sidebar"
 
 const layout = ({children} : {children : React.ReactNode}) => {
   return (
-    <SidebarProvider>
+    <SidebarProvider className="">
       <AppSideBar/>
         <main className="w-full m-2">
             <Navbar/>
