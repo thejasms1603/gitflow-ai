@@ -30,7 +30,7 @@ model Project {
     githubUrl String
     deletedAt DateTime?
     userToProjects UserToProject[]
-
+    commits Commitlog[]
 }
 
 
@@ -43,4 +43,19 @@ model UserToProject {
     user User @relation(fields: [userId], references: [id])
     project Project @relation(fields: [projectId], references: [id])
     @@unique([userId, projectId])
+}
+
+
+model Commitlog {
+    id String @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    projectId String
+    project Project @relation(fields: [projectId], references: [id])
+    commitMessage String
+    commitHash String
+    commitAuthor String
+    commitAuthorAvatar String
+    commitDate DateTime
+    summary String
 }

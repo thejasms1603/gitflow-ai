@@ -11,11 +11,8 @@ export const projectRouter = createTRPCRouter({
             githubToken: z.string().optional()
         })
     ).mutation(async ({ctx, input}) => {
-        if(!ctx.user.userId)
-        {
-            toast.error("User not authorized");
-        }
-        const project = await db.project.create({
+        console.log(ctx.user.userId);
+        const project = await ctx.db.project.create({
             data:{
                 githubUrl:input.githubUrl,
                 name:input.name,
@@ -27,5 +24,17 @@ export const projectRouter = createTRPCRouter({
             }
         });
         return project;
+    }),
+    getProjects: protectedProcedure.query(async ({ctx}) => {
+        return await ctx.db.project.findMany({
+            where:{
+                userToProjects:{
+                    some:{
+                        userId:ctx.user.userId!
+                    }
+                },
+                deletedAt: null
+            }
+        })
     })
 })

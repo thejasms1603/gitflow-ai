@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRefetch } from "@/hooks/use-refetch";
 import { api } from "@/trpc/react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
@@ -16,9 +17,9 @@ type FormProps = {
 const CreatePage = () => {
   const { register, handleSubmit, reset } = useForm<FormProps>();
   const createProject = api.project.createProject.useMutation();
+  const refetch = useRefetch()
 
   function onSubmit(data: FormProps) {
-    window.alert(JSON.stringify(data, null, 2));
     createProject.mutate(
       {
         githubUrl: data.repoUrl,
@@ -28,6 +29,7 @@ const CreatePage = () => {
       {
         onSuccess: () => {
           toast.success("Project created successfully");
+          refetch()
           reset();
         },
         onError: () => {

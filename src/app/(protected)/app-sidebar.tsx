@@ -36,44 +36,43 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useProject } from "@/hooks/use-projects";
 
 const AppSideBar = () => {
   const pathname = usePathname();
   const { isMobile, open } = useSidebar();
+  const {projects, projectId, setProjectId} = useProject()
   return (
     <Sidebar collapsible="icon" side="left" variant="floating">
       <SidebarHeader className="flex items-center gap-2">
-       <div className="flex items-center gap-2 mt-2">
-        {/* Should Add Image */}
-        {open && (
-         <h1>GitFlow AI</h1> 
-        )}
-       </div>
+        <div className="mt-2 flex items-center gap-2">
+          {/* Should Add Image */}
+          {open && <h1>GitFlow AI</h1>}
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => {
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <Link
-                        href={item.url}
-                        className={cn(
-                          pathname === item.url &&
-                            "bg-black text-white dark:bg-white dark:text-black",
-                          "hover:bg-blue-500",
-                        )}
-                      >
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              {items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <Link
+                      href={item.url}
+                      className={cn(
+                        "flex items-center gap-2 rounded-md px-3 py-2 transition-all", // Added padding & transition
+                        pathname === item.url
+                          ? "bg-black text-white dark:bg-white dark:text-black"
+                          : "hover:bg-blue-500", 
+                      )}
+                    >
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -81,35 +80,33 @@ const AppSideBar = () => {
           <SidebarGroupLabel>Your Projects</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {projects.map((project) => {
-                return (
-                  <SidebarMenuItem key={project.name}>
-                    <SidebarMenuButton asChild>
+              {projects?.map((project) => (
+                <SidebarMenuItem key={project.id}>
+                  <SidebarMenuButton asChild>
+                    <div
+                      onClick={() => setProjectId(project.id)}
+                      className={cn(
+                        "flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 transition-all",
+                        project.id === projectId
+                          ? "bg-black text-white dark:bg-white dark:text-black"
+                          : "hover:bg-blue-500",
+                      )}
+                    >
                       <div
                         className={cn(
-                          pathname === project.url &&
-                            "bg-black text-white dark:bg-white dark:text-black",
-                          "cursor-pointer hover:bg-blue-500",
+                          "flex size-6 items-center justify-center rounded-sm border bg-white text-sm dark:text-black",
+                          project.id === projectId
+                            ? "bg-primary text-white"
+                            : "hover:bg-blue-500",
                         )}
                       >
-                        <div
-                          className={cn(
-                            "flex size-6 items-center justify-center rounded-sm border bg-white text-sm text-primary hover:bg-blue-500",
-                            {
-                              "bg-black text-white dark:bg-white dark:text-black":
-                                true,
-                              // 'bg-primary text-white' : project.id === project.id
-                            },
-                          )}
-                        >
-                          {project.name[0]}
-                        </div>
-                        <span>{project.name}</span>
+                        {project.name?.[0] ?? "?"}
                       </div>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+                      <span>{project.name}</span>
+                    </div>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
               <div className="h-2"></div>
 
               {open && (

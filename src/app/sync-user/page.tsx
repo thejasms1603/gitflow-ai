@@ -36,6 +36,7 @@ const Syncuser = async () => {
     console.error("Error Syncing User", error);
     return notFound(); 
   }
+  redirect('/dashboard')
 };
 
 export default Syncuser;
