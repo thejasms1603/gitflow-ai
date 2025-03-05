@@ -2,10 +2,10 @@
 
 import Skeleton from "@/components/Skeleton";
 import { useProject } from "@/hooks/use-projects";
-import { useUser } from "@clerk/nextjs";
 import { ExternalLink, Github } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import CommitLog from "./commit-log";
 
 const DashboardPage = () => {
   const { project } = useProject();
@@ -46,7 +46,10 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      <div className="mt-8">commit logs</div>
+      <div className="mt-8">
+        commit logs
+        <CommitLog/>
+      </div>
     </div>
   );
 };
