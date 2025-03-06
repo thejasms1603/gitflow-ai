@@ -1,14 +1,16 @@
-import {GoogleGenerativeAI} from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Document } from "@langchain/core/documents";
+import { string } from "zod";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY|| "");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 const model = genAI.getGenerativeModel({
-    model:"gemini-2.0-flash"
-})
+  model: "gemini-2.0-flash",
+});
 
-export const aiSummarizeCommit = async (diff: string) =>{
-   const response = await model.generateContent([
-     `You are an AI assistant that summarizes GitHub commit diffs. 
+export const aiSummarizeCommit = async (diff: string) => {
+  const response = await model.generateContent([
+    `You are an AI assistant that summarizes GitHub commit diffs. 
     Given a commit diff, analyze the changes and generate a concise summary.
 
     **Instructions:**
@@ -31,6 +33,49 @@ export const aiSummarizeCommit = async (diff: string) =>{
 
     **Now summarize this commit diff:**
     ${diff}`,
-   ]);
-return response.response.text();
-}
+  ]);
+  return response.response.text();
+};
+
+export const summariseCode = async (doc: Document) => {
+  console.log("Getting summary for", doc.metadata.source);
+  const code = doc.pageContent.slice(0, 10000);
+  // generate a prompt
+  const prompt = `You are an AI that summarizes code. Summarize the following code snippet in simple terms, preserving its logic and intent:
+
+  Code:
+  ${code}
+
+  Provide a concise summary:`;
+  const response = await model.generateContent(prompt);
+
+  return response.response.text();
+  // try {
+  //   const response = await someLLMModel.generateContent(prompt);
+  //   return response.response?.text() ?? "No summary generated.";
+  // } catch (error) {
+  //   console.error("Error generating summary:", error);
+  //   return "Error generating summary.";
+  // }
+};
+
+export const generateEmbedding = async (summary: string) => {
+  try {
+    if (!summary) {
+      throw new Error("Summary cannot be empty.");
+    }
+
+    const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
+
+    const result = await model.embedContent(summary);
+
+    if (!result?.embedding) {
+      throw new Error("Failed to generate embedding.");
+    }
+
+    return result.embedding.values ?? [];
+  } catch (error) {
+    console.error("Error generating embeddings:", error);
+    return [];
+  }
+};
