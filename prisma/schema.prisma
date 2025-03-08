@@ -22,6 +22,8 @@ model User {
     email String @unique
     tokens Int @default(150)
     userToProjects UserToProject[]
+    questionsAsked Question[]
+    stripeTransactions StripeTransaction[]
 }
 
 model Project {
@@ -34,6 +36,8 @@ model Project {
     userToProjects UserToProject[]
     commits Commitlog[]
     codeembedding SourceCodeEmbedding[]
+    savedQuestions Question[]
+    meetings Meeting[]
 }
 
 
@@ -51,7 +55,7 @@ model UserToProject {
 
 model SourceCodeEmbedding {
     id String @id @default(cuid())
-    summaryEmbeddding Unsupported("vector(768)")?
+    summaryEmbedding Unsupported("vector(768)")?
     sourceCode String
     fileName String
     summary String
@@ -71,4 +75,57 @@ model Commitlog {
     commitAuthorAvatar String
     commitDate DateTime
     summary String
+}
+
+model Question {
+    id String @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAT DateTime @updatedAt
+    question String
+    answer String
+    filesReferences Json?
+    projectId String
+    userId String
+    user User @relation(fields: [userId], references: [id])
+    project Project @relation(fields: [projectId], references: [id])
+}
+
+model Meeting {
+    id String @id @default(cuid())
+    name String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    meetingUrl String
+    projectId String
+    project Project @relation(fields: [projectId], references: [id])
+    status MeetingStatus @default(PROCESSING)
+    issues Issue[]
+}
+
+
+model Issue {
+    id String @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    start String
+    end String
+    gist String
+    headline String
+    summary String
+    meetingId String
+    meeting Meeting @relation(fields: [meetingId], references: [id])
+}
+enum MeetingStatus {
+    PROCESSING
+    COMPLETED
+    FAILED
+}
+
+model StripeTransaction {
+    id String @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    userId String
+    user User @relation(fields: [userId], references: [id])
+    tokens Int
 }

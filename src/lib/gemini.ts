@@ -47,16 +47,13 @@ export const summariseCode = async (doc: Document) => {
   ${code}
 
   Provide a concise summary:`;
-  const response = await model.generateContent(prompt);
-
-  return response.response.text();
-  // try {
-  //   const response = await someLLMModel.generateContent(prompt);
-  //   return response.response?.text() ?? "No summary generated.";
-  // } catch (error) {
-  //   console.error("Error generating summary:", error);
-  //   return "Error generating summary.";
-  // }
+  try {
+    const response = await model.generateContent(prompt);
+    return response.response?.text() ?? "No Summary Generated";
+  } catch (error) {
+    console.log("Error generating summary:", error);
+    return "Error generating summary";
+  }
 };
 
 export const generateEmbedding = async (summary: string) => {
@@ -64,11 +61,8 @@ export const generateEmbedding = async (summary: string) => {
     if (!summary) {
       throw new Error("Summary cannot be empty.");
     }
-
     const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
-
     const result = await model.embedContent(summary);
-
     if (!result?.embedding) {
       throw new Error("Failed to generate embedding.");
     }

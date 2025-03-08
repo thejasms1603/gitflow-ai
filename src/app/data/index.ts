@@ -3,7 +3,7 @@ import { Bot, CreditCard, LayoutDashboard, Presentation } from "lucide-react";
 export const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Q&A", url: "/qa", icon: Bot },
-  { title: "Meeting", url: "/meeting", icon: Presentation },
+  { title: "Meeting", url: "/meetings", icon: Presentation },
   { title: "Billing", url: "/billing", icon: CreditCard },
 ];
 
