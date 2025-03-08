@@ -19,84 +19,53 @@ const CreatePage = () => {
   const { register, handleSubmit, reset } = useForm<FormProps>();
   const createProject = api.project.createProject.useMutation();
   const checkTokens = api.project.checkTokens.useMutation();
-  console.log("fileCount", checkTokens.data?.fileCount);
-  console.log("checkTokens", checkTokens.data?.userTokens);
   const refetch = useRefetch();
 
   function onSubmit(data: FormProps) {
-    if (!checkTokens.data) {
-      createProject.mutate(
-        {
-          githubUrl: data.repoUrl,
-          name: data.projectName,
-          githubToken: data.githubToken,
-        },
-        {
-          onSuccess: () => {
-            toast.success("Project created successfully");
-            refetch();
-            reset();
-          },
-          onError: () => {
-            toast.error("Failed to create project, Please try again");
-          },
-        },
-      );
-    } else {
-      checkTokens.mutate({
+    checkTokens.mutate(
+      {
         githubUrl: data.repoUrl,
         githubToken: data.githubToken,
-      });
-    }
+      },
+      {
+        onSuccess: (response) => {
+          console.log("File Count:", response.fileCount);
+          console.log("User Tokens:", response.userTokens);
+
+          if (!response || response.userTokens === undefined) {
+            toast.error("Failed to fetch token data");
+            return;
+          }
+
+          if (response.userTokens < response.fileCount) {
+            toast.error("Not enough tokens to create the project.");
+            return;
+          }
+
+          createProject.mutate(
+            {
+              githubUrl: data.repoUrl,
+              name: data.projectName,
+              githubToken: data.githubToken,
+            },
+            {
+              onSuccess: () => {
+                toast.success("Project created successfully");
+                refetch();
+                reset();
+              },
+              onError: () => {
+                toast.error("Failed to create project, Please try again");
+              },
+            },
+          );
+        },
+        onError: () => {
+          toast.error("Failed to check tokens, Please try again");
+        },
+      },
+    );
   }
-
-
-
-  // function onSubmit(data: FormProps) {
-  //   checkTokens.mutate(
-  //     {
-  //       githubUrl: data.repoUrl,
-  //       githubToken: data.githubToken,
-  //     },
-  //     {
-  //       onSuccess: (response) => {
-  //         console.log("File Count:", response.fileCount);
-  //         console.log("User Tokens:", response.userTokens);
-
-  //         if (!response || response.userTokens === undefined) {
-  //           toast.error("Failed to fetch token data");
-  //           return;
-  //         }
-
-  //         if (response.userTokens < response.fileCount) {
-  //           toast.error("Not enough tokens to create the project.");
-  //           return;
-  //         }
-
-  //         createProject.mutate(
-  //           {
-  //             githubUrl: data.repoUrl,
-  //             name: data.projectName,
-  //             githubToken: data.githubToken,
-  //           },
-  //           {
-  //             onSuccess: () => {
-  //               toast.success("Project created successfully");
-  //               refetch();
-  //               reset();
-  //             },
-  //             onError: () => {
-  //               toast.error("Failed to create project, Please try again");
-  //             },
-  //           },
-  //         );
-  //       },
-  //       onError: () => {
-  //         toast.error("Failed to check tokens, Please try again");
-  //       },
-  //     },
-  //   );
-  // }
 
   const hasEnoughTokens = checkTokens.data?.userTokens ? checkTokens.data?.fileCount <= checkTokens.data?.userTokens : true;
 
@@ -143,17 +112,17 @@ const CreatePage = () => {
                 <div className="flex items-center gap-2">
                   <Info className="size-4" />
                   <p className="text-sm"> 
-                    You wll be charged <strong> {checkTokens.data.fileCount} </strong> tokens for this project
+                    You wll be charged <strong> {checkTokens.data?.fileCount} </strong> tokens for this project
                   </p>
                 </div>
                 <p className="text-sm text-blue-600 ml-6">
-                  You have <strong>{checkTokens.data.userTokens}</strong> tokens remaining
+                  You have <strong>{checkTokens.data?.userTokens}</strong> tokens remaining
                 </p>
               </div>
               </>
             )}
             <div className="h-4"></div>
-            <Button type="submit" disabled={createProject.isPending || checkTokens.isPending || !hasEnoughTokens} >
+            <Button type="submit" disabled={checkTokens.isPending || createProject.isPending || !hasEnoughTokens} >
               {!!checkTokens.data ? "Create Project" : "Check Token"}
             </Button>
           </form>

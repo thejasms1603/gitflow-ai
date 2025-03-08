@@ -1,6 +1,6 @@
 import { Octokit } from "octokit";
 import axios from 'axios';
-const { aiSummarizeCommit } = require("./gemini");
+import { aiSummarizeCommit } from "./gemini";
 import { db } from "@/server/db";
 
 export const octokit = new Octokit({
@@ -90,7 +90,7 @@ export const pollCommits = async (projectId: string) => {
             summary,
           };
         })
-        .filter(Boolean), // Removes null values
+        .filter((commit): commit is NonNullable<typeof commit> => commit !== null),
     });
     return commits;
   } catch (error) {
@@ -98,16 +98,23 @@ export const pollCommits = async (projectId: string) => {
   }
 };
 
-async function summarizeCommit(githubUrl: string, commitHash: string)
-{
-  //get the diff, and pass the diff into AI
-  const { data } = await axios.get(`${githubUrl}/commit/${commitHash}.diff`, {
-    headers: {
-      Accept: "application/vnd.github.v3.diff",
-    },
-  });
-  return await aiSummarizeCommit(data) || "";
+async function summarizeCommit(githubUrl: string, commitHash: string) {
+  try {
+    const { data } = await axios.get(`${githubUrl}/commit/${commitHash}.diff`, {
+      headers: {
+        Accept: "application/vnd.github.v3.diff",
+      },
+    });
 
+    if (!data || typeof data !== "string" || data.trim() === "") {
+      throw new Error("Invalid commit diff received");
+    }
+
+    return await aiSummarizeCommit(data);
+  } catch (error) {
+    console.error("Error in summarizeCommit:", error);
+    return "Error fetching or summarizing commit.";
+  }
 }
 
 const fetchProjectGithubUrl = async (projectId: string) => {
@@ -152,14 +159,3 @@ const filterUnprocessedCommits = async (
   }
 };
 
-// // Top-level function to call `pollCommits`
-const runPolling = async () => {
-  try {
-    await pollCommits("cm7upm5wc00031q596yqoolvk");
-    console.log("Executed successfully");
-  } catch (error) {
-    console.error("Error in runPolling:", error);
-  }
-};
-
-runPolling().catch((error) => console.error("Error in runPolling:", error));

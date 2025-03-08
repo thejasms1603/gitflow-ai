@@ -17,6 +17,7 @@ import {
   BadgeCheck,
   Bell,
   ChevronsUpDown,
+  GitBranchIcon,
   LogOut,
   PlusIcon,
   Sparkles,
@@ -47,6 +48,7 @@ const AppSideBar = () => {
       <SidebarHeader className="flex items-center gap-2">
         <div className="mt-2 flex items-center gap-2">
           {/* Should Add Image */}
+          <GitBranchIcon className="h-6 w-6"/>
           {open && <h1>GitFlow AI</h1>}
         </div>
       </SidebarHeader>

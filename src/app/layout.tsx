@@ -6,6 +6,7 @@ import { TRPCReactProvider } from "@/trpc/react";
 import { Providers } from "./Providers";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "sonner";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Gitflow AI",
@@ -25,10 +26,11 @@ export default function RootLayout({
     >
       <body>
         <Providers>
-        {/* <Navbar/> */}
+          {/* <Navbar/> */}
           <TRPCReactProvider>{children}</TRPCReactProvider>
-          <Toaster richColors/>
+          <Toaster richColors />
         </Providers>
+        {/* <Footer /> */}
       </body>
     </html>
   );

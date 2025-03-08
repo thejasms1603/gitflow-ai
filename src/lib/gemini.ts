@@ -1,16 +1,16 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Document } from "@langchain/core/documents";
-import { string } from "zod";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
+  model: "gemini-1.5-flash",
 });
 
 export const aiSummarizeCommit = async (diff: string) => {
-  const response = await model.generateContent([
-    `You are an AI assistant that summarizes GitHub commit diffs. 
+  try {
+    const response = await model.generateContent([
+      `You are an AI assistant that summarizes GitHub commit diffs. 
     Given a commit diff, analyze the changes and generate a concise summary.
 
     **Instructions:**
@@ -33,14 +33,21 @@ export const aiSummarizeCommit = async (diff: string) => {
 
     **Now summarize this commit diff:**
     ${diff}`,
-  ]);
-  return response.response.text();
+    ]);
+    const textResponse = response?.response?.text();
+    if (!textResponse) {
+      throw new Error("Invalid response from API.");
+    }
+    return textResponse;
+  } catch (error) {
+    console.log("Error summarizing commit:", error);
+    return "Error summarizing commit";
+  }
 };
 
 export const summariseCode = async (doc: Document) => {
   console.log("Getting summary for", doc.metadata.source);
   const code = doc.pageContent.slice(0, 10000);
-  // generate a prompt
   const prompt = `You are an AI that summarizes code. Summarize the following code snippet in simple terms, preserving its logic and intent:
 
   Code:
@@ -58,18 +65,28 @@ export const summariseCode = async (doc: Document) => {
 
 export const generateEmbedding = async (summary: string) => {
   try {
-    if (!summary) {
+    if (!summary || summary.trim() === "") {
       throw new Error("Summary cannot be empty.");
     }
+
     const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
     const result = await model.embedContent(summary);
-    if (!result?.embedding) {
-      throw new Error("Failed to generate embedding.");
+
+    if (!result || !result.embedding || !result.embedding.values) {
+      throw new Error(
+        "Failed to generate embedding: No embedding values found.",
+      );
     }
 
-    return result.embedding.values ?? [];
+    const embedding = result.embedding.values ?? [];
+
+    if (embedding.length === 0) {
+      throw new Error("Generated embedding is empty.");
+    }
+
+    return embedding;
   } catch (error) {
     console.error("Error generating embeddings:", error);
-    return [];
+    throw error;
   }
 };

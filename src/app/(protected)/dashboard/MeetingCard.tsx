@@ -70,7 +70,7 @@ const MeetingCard = () => {
           },
         );
       } catch (error) {
-        console.log(error);
+        console.error(error);
         toast.error("Upload failed. Please try again.");
       } finally {
         setIsUploading(false);

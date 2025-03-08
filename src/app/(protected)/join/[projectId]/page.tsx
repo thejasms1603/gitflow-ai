@@ -47,7 +47,7 @@ const JoinProject = async (props: Props) => {
       },
     });
   } catch (error) {
-    console.log("user already in project");
+    console.error("user already in project");
   }
   return redirect("/dashboard");
 };

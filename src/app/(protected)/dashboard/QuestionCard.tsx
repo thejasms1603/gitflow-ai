@@ -42,7 +42,7 @@ const QuestionCard = () => {
 
     for await (const delta of readStreamableValue(output)) {
       if (delta) {
-        setAnswer((prev) => prev + delta);
+        setAnswer((ans) => ans + delta);
       }
     }
     setLoading(false);

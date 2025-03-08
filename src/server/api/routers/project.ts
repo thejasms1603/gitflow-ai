@@ -252,16 +252,16 @@ export const projectRouter = createTRPCRouter({
           return { fileCount, userTokens: 0 };
         }
 
-        const user = await ctx.db.user.findUnique({
+        const userTokens = await ctx.db.user.findUnique({
           where: { id: ctx.user.userId },
           select: { tokens: true },
         });
 
-        console.log("User tokens found:", user?.tokens);
+        console.log("User tokens found:", userTokens?.tokens);
 
         return {
           fileCount: fileCount,
-          userTokens: user?.tokens,
+          userTokens: userTokens?.tokens,
         };
       } catch (error) {
         console.error("Error in checkTokens procedure:", error);

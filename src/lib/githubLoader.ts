@@ -33,7 +33,6 @@ const getFileCount = async (path: string, octokit: Octokit, githubOwner:string, 
     }
     return acc + fileCount
   }
-  
   return acc
 }
 export const checkFileCount = async (githubUrl:string, githubToken?:string) =>{
@@ -47,88 +46,17 @@ export const checkFileCount = async (githubUrl:string, githubToken?:string) =>{
   {
     throw new Error("Invalid GitHub URL")
   }
-  const fileCount = await getFileCount('/', octokit, githubOwner, githubRepo, 0)
+  const fileCount = await getFileCount('', octokit, githubOwner, githubRepo, 0)
   return fileCount
 }
 
 
-// const getFileCount = async (
-//   path: string,
-//   octokit: Octokit,
-//   githubOwner: string,
-//   githubRepo: string,
-// ): Promise<number> => {
-//   try {
-//     const { data } = await octokit.rest.repos.getContent({
-//       owner: githubOwner,
-//       repo: githubRepo,
-//       path,
-//     });
-
-//     if (!data) {
-//       console.error("GitHub API returned no data for path:", path);
-//       return 0;
-//     }
-
-//     if (!Array.isArray(data) && data.type === "file") {
-//       return 1;
-//     }
-
-//     if (Array.isArray(data)) {
-//       let fileCount = 0;
-//       const directories: string[] = [];
-
-//       for (const item of data) {
-//         item.type === "dir" ? directories.push(item.path) : fileCount++;
-//       }
-
-//       const directoryCounts = await Promise.all(
-//         directories.map((dirPath) =>
-//           getFileCount(dirPath, octokit, githubOwner, githubRepo),
-//         ),
-//       );
-
-//       return fileCount + directoryCounts.reduce((acc, count) => acc + count, 0);
-//     }
-//   } catch (error) {
-//     console.error("Error fetching GitHub content:", error);
-//     return 0;
-//   }
-
-//   return 0;
-// };
-
-// export const checkFileCount = async (
-//   githubUrl: string,
-//   githubToken?: string,
-// ): Promise<number> => {
-//   try {
-//     if (!githubUrl.includes("github.com"))
-//       throw new Error("Invalid GitHub URL");
-
-//     const octokit = new Octokit({
-//       auth: githubToken || process.env.GITHUB_TOKEN,
-//     });
-
-//     const [githubOwner, githubRepo] = githubUrl.split("/").slice(3, 5);
-//     if (!githubOwner || !githubRepo)
-//       throw new Error("Invalid GitHub URL format");
-
-//     console.log("Fetching file count for:", { githubOwner, githubRepo });
-//     return await getFileCount("/", octokit, githubOwner, githubRepo);
-//   } catch (error) {
-//     console.error("Error in checkFileCount:", error);
-//     return 0;
-//   }
-// };
-
-
 export const loadGithubRepo = async (githubUrl: string, githubToken?:string) => {
   const loader = new GithubRepoLoader(githubUrl, {
-    accessToken:process.env.GITHUB_TOKEN || "",
+    accessToken:process.env.GITHUB_TOKEN || githubToken,
     branch: "main",
-    recursive: false,
     ignoreFiles:['package-lock.json', 'yarn.lock','pnpm-lock.yaml','bun-lockb'],
+    recursive: true,
     unknown:"warn",
     maxConcurrency:5
   });  
@@ -178,7 +106,7 @@ export const generateEmbeddings = async (docs: Document[]) => {
         return {
           summary,
           embeddings,
-          sourceCode: doc.pageContent, 
+          sourceCode: JSON.parse(JSON.stringify(doc.pageContent)), 
           fileName: doc.metadata.source,
         };
       } catch (error) {
