@@ -1,10 +1,11 @@
 import { db } from "@/server/db";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
+export const dynamic = "force-dynamic";
 
 const Syncuser = async () => {
   try {
-    const { userId} = await auth();
+    const { userId } = await auth();
     if (!userId) return redirect("/sign-in");
 
     const client = await clerkClient();
@@ -12,16 +13,16 @@ const Syncuser = async () => {
     const email = user.emailAddresses[0]?.emailAddress;
 
     if (!email) {
-      return notFound(); 
+      notFound();
     }
 
     await db.user.upsert({
       where: {
-        email, 
+        email,
       },
       update: {
         imageUrl: user.imageUrl,
-        firstName: user.firstName ?? "", 
+        firstName: user.firstName ?? "",
         lastName: user.lastName ?? "",
       },
       create: {
@@ -34,9 +35,9 @@ const Syncuser = async () => {
     });
   } catch (error) {
     console.error("Error Syncing User", error);
-    return notFound(); 
+    notFound();
   }
-  redirect('/dashboard')
+  redirect("/home");
 };
 
 export default Syncuser;
