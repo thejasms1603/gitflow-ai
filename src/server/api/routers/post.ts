@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 
 export const postRouter = createTRPCRouter({
@@ -14,18 +13,27 @@ export const postRouter = createTRPCRouter({
   create: publicProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.post.create({
-        data: {
-          name: input.name,
-        },
-      });
+      try {
+        const newPost = await ctx.db.post.create({
+          data: {
+            name: input.name,
+            createdAt: new Date(), // Ensure timestamp
+          },
+        });
+        return newPost;
+      } catch (error) {
+        throw new Error("Failed to create post");   
+      }
     }),
 
   getLatest: publicProcedure.query(async ({ ctx }) => {
-    const post = await ctx.db.post.findFirst({
-      orderBy: { createdAt: "desc" },
-    });
-
-    return post ?? null;
+    try {
+      const post = await ctx.db.post.findFirst({
+        orderBy: { createdAt: "desc" },
+      });
+      return post ?? null;
+    } catch (error) {
+      throw new Error("Failed to fetch latest post");
+    }
   }),
 });
