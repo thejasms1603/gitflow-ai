@@ -9,7 +9,7 @@ import Image from "next/image";
 import MDEditor from "@uiw/react-md-editor";
 import CodeRef from "../dashboard/code-ref";
 
-const page = () => {
+const QAPage = () => {
   const { projectId } = useProject();
   const { data: questions } = api.project.getQuestions.useQuery({ projectId });
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -54,4 +54,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default QAPage;

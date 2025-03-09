@@ -21,16 +21,20 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${GeistSans.variable}`}
+      className={`${GeistSans.variable} min-h-screen bg-background font-sans antialiased`}
       suppressHydrationWarning
     >
       <body>
         <Providers>
-          {/* <Navbar/> */}
-          <TRPCReactProvider>{children}</TRPCReactProvider>
-          <Toaster richColors />
+          <div className="relative flex min-h-screen flex-col">
+            <Navbar />
+            <main className="flex-1">
+              <TRPCReactProvider>{children}</TRPCReactProvider>
+            </main>
+            <Toaster richColors />
+            <Footer />
+          </div>
         </Providers>
-        {/* <Footer /> */}
       </body>
     </html>
   );

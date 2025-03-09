@@ -26,7 +26,7 @@ const LandingPage = () => {
     //   <Button onClick={handleSignInClick} />
     // </BackgroundLines>
     <div>
-      <BackgroundLines className="flex w-full flex-col items-center justify-center px-4 ">
+      <BackgroundLines className="flex w-full flex-col items-center justify-center px-4">
         <div className="duration-700 animate-in fade-in-0">
           <h2 className="relative z-20 bg-gradient-to-b from-neutral-900 to-neutral-700 bg-clip-text py-2 text-center font-sans text-2xl font-bold tracking-tight text-transparent dark:from-neutral-600 dark:to-white md:py-10 md:text-4xl lg:text-7xl">
             Welcome To, <br />

@@ -11,7 +11,7 @@ const Home = async () => {
   const user = await getUserDetails();
   if(user)
   {
-    redirect('/dashboard')
+    redirect('/home')
   }
   return (
     <main>
